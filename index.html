@@ -7,10 +7,12 @@
 <style>
 :root {
   --asset-shirt: url('images/shirt_front.png');
-  --asset-frame: url('images/BBF_frame.png');
+  --asset-frame: url('images/BBF_base.png');
   --asset-leaf: url('images/BBF_leaf.png');
   --asset-flower: url('images/BBF_flower.png');
   --asset-text: url('images/BBF_text.png');
+  --asset-back: url('images/BBF_Back1.png');
+  --asset-frame-base: url('images/BBF_frame.png');
 }
 
 * { box-sizing: border-box; }
@@ -144,11 +146,30 @@ h1 {
   mask-repeat: no-repeat;
 }
 
+.layer.frame-base {
+  position: absolute;
+  left: var(--logo-left, 50%);
+  top: var(--logo-top, 25%);
+  width: var(--logo-size, 34%);
+  aspect-ratio: 1 / 1;
+  transform: translateX(-50%) rotate(var(--logo-rotate, -1deg));
+  background: var(--frame-base);
+  -webkit-mask-image: var(--asset-frame-base);
+  mask-image: var(--asset-frame-base);
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+}
+
 .layer.frame  { background: var(--frame);  -webkit-mask-image: var(--asset-frame);  mask-image: var(--asset-frame); }
 .layer.leaf   { background: var(--leaf);   -webkit-mask-image: var(--asset-leaf);   mask-image: var(--asset-leaf); }
 .layer.flower { background: var(--flower); -webkit-mask-image: var(--asset-flower); mask-image: var(--asset-flower); }
 .layer.text   { background: var(--text);   -webkit-mask-image: var(--asset-text);   mask-image: var(--asset-text); }
 
+.card.hide-frame-base .layer.frame-base,
 .card.hide-frame  .layer.frame,
 .card.hide-leaf   .layer.leaf,
 .card.hide-flower .layer.flower,
@@ -164,8 +185,8 @@ h1 {
   aspect-ratio: 1 / 1;
   transform: translate(-50%, -56%);
   background: var(--back-text);
-  -webkit-mask-image: var(--asset-text);
-  mask-image: var(--asset-text);
+  -webkit-mask-image: var(--asset-back);
+  mask-image: var(--asset-back);
   -webkit-mask-position: center;
   mask-position: center;
   -webkit-mask-size: contain;
@@ -229,7 +250,7 @@ h2 {
 
 .control-row {
   display: grid;
-  grid-template-columns: 86px 44px 1fr;
+  grid-template-columns: 86px 44px 1fr 18px;
   gap: 8px;
   align-items: center;
   margin-top: 8px;
@@ -377,6 +398,29 @@ button:hover { background: #eee9df; }
   body { background: #fff; padding: 12px; }
   .card { break-inside: avoid; box-shadow: none; }
 }
+
+.control-row.row-disabled {
+  opacity: 0.38;
+}
+
+.control-row.row-disabled label,
+.control-row.row-disabled input:not([type="checkbox"]) {
+  pointer-events: none;
+  color: #aaa;
+}
+
+.row-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.row-toggle input[type="checkbox"] {
+  width: 15px;
+  height: 15px;
+  cursor: pointer;
+  accent-color: #333;
+}
 </style>
 </head>
 <body>
@@ -386,13 +430,14 @@ button:hover { background: #eee9df; }
 
 <main class="grid">
 
-  <section class="card" style="--body:#E7BD53;--text:#E44882;--leaf:#68BE8D;--flower:#FFF8EB;--frame:#765B56;--back-text:#E44882;">
+  <section class="card hide-frame-base" style="--body:#E7BD53;--text:#E44882;--leaf:#68BE8D;--flower:#A2D7DD;--frame:#FFFFFF;--back-text:#E44882;;--frame-base:#FFFFFF">
     <h2>アズールブーケ</h2>
     <div class="mockup-wrap">
       <div class="mockup">
         <div class="side-panel" data-side="front"><span class="mockup-label">前面</span>
           <div class="shirt">
             <div class="shirt-color"></div>
+            <div class="layer frame-base"></div>
             <div class="logo">
               <div class="layer frame"></div>
               <div class="layer leaf"></div>
@@ -416,22 +461,14 @@ button:hover { background: #eee9df; }
         <div class="control-row"><label>ボディ</label><input type="color" data-var="--body"><input type="text" data-var-text="--body"></div>
         <p class="ctrl-section-title">▸ 前面</p>
         <div class="ctrl-panel" data-ctrl="front">
-          <div class="control-row"><label>文字</label><input type="color" data-var="--text"><input type="text" data-var-text="--text"></div>
-          <div class="control-row"><label>葉</label><input type="color" data-var="--leaf"><input type="text" data-var-text="--leaf"></div>
-          <div class="control-row"><label>花</label><input type="color" data-var="--flower"><input type="text" data-var-text="--flower"></div>
-          <div class="control-row"><label>枠</label><input type="color" data-var="--frame"><input type="text" data-var-text="--frame"></div>
+          <div class="control-row" data-linked-layer="text"><label>文字</label><input type="color" data-var="--text"><input type="text" data-var-text="--text"><span class="row-toggle"><input type="checkbox" class="row-layer-toggle" data-layer="text" checked></span></div>
+          <div class="control-row" data-linked-layer="leaf"><label>葉</label><input type="color" data-var="--leaf"><input type="text" data-var-text="--leaf"><span class="row-toggle"><input type="checkbox" class="row-layer-toggle" data-layer="leaf" checked></span></div>
+          <div class="control-row" data-linked-layer="flower"><label>花</label><input type="color" data-var="--flower"><input type="text" data-var-text="--flower"><span class="row-toggle"><input type="checkbox" class="row-layer-toggle" data-layer="flower" checked></span></div>
+          <div class="control-row row-disabled" data-linked-layer="frame-base"><label>枠</label><input type="color" data-var="--frame-base"><input type="text" data-var-text="--frame-base"><span class="row-toggle"><input type="checkbox" class="row-layer-toggle" data-layer="frame-base" ></span></div>
+          <div class="control-row" data-linked-layer="frame"><label>塗り</label><input type="color" data-var="--frame"><input type="text" data-var-text="--frame"><span class="row-toggle"><input type="checkbox" class="row-layer-toggle" data-layer="frame" checked></span></div>
           <p class="ctrl-section-title">▸ 背面</p>
-          <div class="control-row"><label>テキスト</label><input type="color" data-var="--back-text"><input type="text" data-var-text="--back-text"></div>
-          <div class="layer-toggle-box">
-            <p class="layer-toggle-title">素材ごとの表示 / 非表示</p>
-            <div class="layer-toggle-grid">
-              <label class="layer-toggle-row"><input type="checkbox" class="toggle-layer" data-layer="text" checked><span>文字</span></label>
-              <label class="layer-toggle-row"><input type="checkbox" class="toggle-layer" data-layer="leaf" checked><span>葉</span></label>
-              <label class="layer-toggle-row"><input type="checkbox" class="toggle-layer" data-layer="flower" checked><span>花</span></label>
-              <label class="layer-toggle-row"><input type="checkbox" class="toggle-layer" data-layer="frame" checked><span>枠</span></label>
-              <label class="layer-toggle-row"><input type="checkbox" class="toggle-layer" data-layer="back-text" checked><span>テキスト</span></label>
-            </div>
-          </div>
+          <div class="control-row" data-linked-layer="back-text"><label>テキスト</label><input type="color" data-var="--back-text"><input type="text" data-var-text="--back-text"><span class="row-toggle"><input type="checkbox" class="row-layer-toggle" data-layer="back-text" checked></span></div>
+</div>
         </div>
 
         <div class="button-row">
@@ -443,13 +480,14 @@ button:hover { background: #eee9df; }
     </div>
   </section>
 
-  <section class="card" style="--body:#5383C3;--text:#FFFFFF;--leaf:#68BE8D;--flower:#BA2636;--frame:#FAD764;--back-text:#FFFFFF;">
-    <h2>DOLLCESTRA</h2>
+  <section class="card hide-frame-base" style="--body:#1C539C;--text:#BA2636;--leaf:#68BE8D;--flower:#FAD764;--frame:#FFFFFF;--back-text:#FFFFFF;;--frame-base:#FFFFFF">
+    <h2>DOLLCESTAR</h2>
     <div class="mockup-wrap">
       <div class="mockup">
         <div class="side-panel" data-side="front"><span class="mockup-label">前面</span>
           <div class="shirt">
             <div class="shirt-color"></div>
+            <div class="layer frame-base"></div>
             <div class="logo">
               <div class="layer frame"></div>
               <div class="layer leaf"></div>
@@ -473,22 +511,14 @@ button:hover { background: #eee9df; }
         <div class="control-row"><label>ボディ</label><input type="color" data-var="--body"><input type="text" data-var-text="--body"></div>
         <p class="ctrl-section-title">▸ 前面</p>
         <div class="ctrl-panel" data-ctrl="front">
-          <div class="control-row"><label>文字</label><input type="color" data-var="--text"><input type="text" data-var-text="--text"></div>
-          <div class="control-row"><label>葉</label><input type="color" data-var="--leaf"><input type="text" data-var-text="--leaf"></div>
-          <div class="control-row"><label>花</label><input type="color" data-var="--flower"><input type="text" data-var-text="--flower"></div>
-          <div class="control-row"><label>枠</label><input type="color" data-var="--frame"><input type="text" data-var-text="--frame"></div>
+          <div class="control-row" data-linked-layer="text"><label>文字</label><input type="color" data-var="--text"><input type="text" data-var-text="--text"><span class="row-toggle"><input type="checkbox" class="row-layer-toggle" data-layer="text" checked></span></div>
+          <div class="control-row" data-linked-layer="leaf"><label>葉</label><input type="color" data-var="--leaf"><input type="text" data-var-text="--leaf"><span class="row-toggle"><input type="checkbox" class="row-layer-toggle" data-layer="leaf" checked></span></div>
+          <div class="control-row" data-linked-layer="flower"><label>花</label><input type="color" data-var="--flower"><input type="text" data-var-text="--flower"><span class="row-toggle"><input type="checkbox" class="row-layer-toggle" data-layer="flower" checked></span></div>
+          <div class="control-row row-disabled" data-linked-layer="frame-base"><label>枠</label><input type="color" data-var="--frame-base"><input type="text" data-var-text="--frame-base"><span class="row-toggle"><input type="checkbox" class="row-layer-toggle" data-layer="frame-base" ></span></div>
+          <div class="control-row" data-linked-layer="frame"><label>塗り</label><input type="color" data-var="--frame"><input type="text" data-var-text="--frame"><span class="row-toggle"><input type="checkbox" class="row-layer-toggle" data-layer="frame" checked></span></div>
           <p class="ctrl-section-title">▸ 背面</p>
-          <div class="control-row"><label>テキスト</label><input type="color" data-var="--back-text"><input type="text" data-var-text="--back-text"></div>
-          <div class="layer-toggle-box">
-            <p class="layer-toggle-title">素材ごとの表示 / 非表示</p>
-            <div class="layer-toggle-grid">
-              <label class="layer-toggle-row"><input type="checkbox" class="toggle-layer" data-layer="text" checked><span>文字</span></label>
-              <label class="layer-toggle-row"><input type="checkbox" class="toggle-layer" data-layer="leaf" checked><span>葉</span></label>
-              <label class="layer-toggle-row"><input type="checkbox" class="toggle-layer" data-layer="flower" checked><span>花</span></label>
-              <label class="layer-toggle-row"><input type="checkbox" class="toggle-layer" data-layer="frame" checked><span>枠</span></label>
-              <label class="layer-toggle-row"><input type="checkbox" class="toggle-layer" data-layer="back-text" checked><span>テキスト</span></label>
-            </div>
-          </div>
+          <div class="control-row" data-linked-layer="back-text"><label>テキスト</label><input type="color" data-var="--back-text"><input type="text" data-var-text="--back-text"><span class="row-toggle"><input type="checkbox" class="row-layer-toggle" data-layer="back-text" checked></span></div>
+</div>
         </div>
 
         <div class="button-row">
@@ -500,13 +530,14 @@ button:hover { background: #eee9df; }
     </div>
   </section>
 
-  <section class="card" style="--body:#E7609E;--text:#FFE846;--leaf:#7ED348;--flower:#9D8DE2;--frame:#C8C2C6;--back-text:#FFE846;">
+  <section class="card hide-frame-base" style="--body:#E7609E;--text:#E7609E;--leaf:#6FB898;--flower:#9D8DE2;--frame:#FFFFFF;--back-text:#FFE846;--frame-base:#FFFFFF">
     <h2>ねこはらもーど！</h2>
     <div class="mockup-wrap">
       <div class="mockup">
         <div class="side-panel" data-side="front"><span class="mockup-label">前面</span>
           <div class="shirt">
             <div class="shirt-color"></div>
+            <div class="layer frame-base"></div>
             <div class="logo">
               <div class="layer frame"></div>
               <div class="layer leaf"></div>
@@ -530,22 +561,14 @@ button:hover { background: #eee9df; }
         <div class="control-row"><label>ボディ</label><input type="color" data-var="--body"><input type="text" data-var-text="--body"></div>
         <p class="ctrl-section-title">▸ 前面</p>
         <div class="ctrl-panel" data-ctrl="front">
-          <div class="control-row"><label>文字</label><input type="color" data-var="--text"><input type="text" data-var-text="--text"></div>
-          <div class="control-row"><label>葉</label><input type="color" data-var="--leaf"><input type="text" data-var-text="--leaf"></div>
-          <div class="control-row"><label>花</label><input type="color" data-var="--flower"><input type="text" data-var-text="--flower"></div>
-          <div class="control-row"><label>枠</label><input type="color" data-var="--frame"><input type="text" data-var-text="--frame"></div>
+          <div class="control-row" data-linked-layer="text"><label>文字</label><input type="color" data-var="--text"><input type="text" data-var-text="--text"><span class="row-toggle"><input type="checkbox" class="row-layer-toggle" data-layer="text" checked></span></div>
+          <div class="control-row" data-linked-layer="leaf"><label>葉</label><input type="color" data-var="--leaf"><input type="text" data-var-text="--leaf"><span class="row-toggle"><input type="checkbox" class="row-layer-toggle" data-layer="leaf" checked></span></div>
+          <div class="control-row" data-linked-layer="flower"><label>花</label><input type="color" data-var="--flower"><input type="text" data-var-text="--flower"><span class="row-toggle"><input type="checkbox" class="row-layer-toggle" data-layer="flower" checked></span></div>
+          <div class="control-row row-disabled" data-linked-layer="frame-base"><label>枠</label><input type="color" data-var="--frame-base"><input type="text" data-var-text="--frame-base"><span class="row-toggle"><input type="checkbox" class="row-layer-toggle" data-layer="frame-base" ></span></div>
+          <div class="control-row" data-linked-layer="frame"><label>塗り</label><input type="color" data-var="--frame"><input type="text" data-var-text="--frame"><span class="row-toggle"><input type="checkbox" class="row-layer-toggle" data-layer="frame" checked></span></div>
           <p class="ctrl-section-title">▸ 背面</p>
-          <div class="control-row"><label>テキスト</label><input type="color" data-var="--back-text"><input type="text" data-var-text="--back-text"></div>
-          <div class="layer-toggle-box">
-            <p class="layer-toggle-title">素材ごとの表示 / 非表示</p>
-            <div class="layer-toggle-grid">
-              <label class="layer-toggle-row"><input type="checkbox" class="toggle-layer" data-layer="text" checked><span>文字</span></label>
-              <label class="layer-toggle-row"><input type="checkbox" class="toggle-layer" data-layer="leaf" checked><span>葉</span></label>
-              <label class="layer-toggle-row"><input type="checkbox" class="toggle-layer" data-layer="flower" checked><span>花</span></label>
-              <label class="layer-toggle-row"><input type="checkbox" class="toggle-layer" data-layer="frame" checked><span>枠</span></label>
-              <label class="layer-toggle-row"><input type="checkbox" class="toggle-layer" data-layer="back-text" checked><span>テキスト</span></label>
-            </div>
-          </div>
+          <div class="control-row" data-linked-layer="back-text"><label>テキスト</label><input type="color" data-var="--back-text"><input type="text" data-var-text="--back-text"><span class="row-toggle"><input type="checkbox" class="row-layer-toggle" data-layer="back-text" checked></span></div>
+</div>
         </div>
 
         <div class="button-row">
@@ -557,13 +580,14 @@ button:hover { background: #eee9df; }
     </div>
   </section>
 
-  <section class="card" style="--body:#1C1F26;--text:#F8F8F4;--leaf:#1EBECD;--flower:#F56455;--frame:#B6B9BE;--back-text:#F8F8F4;">
+  <section class="card hide-frame-base" style="--body:#1C1F26;--text:#C28E00;--leaf:#1EBECD;--flower:#F56455;--frame:#F8F8F4;--back-text:#F8F8F4;;--frame-base:#F8F8F4">
     <h2>Mischen Voice</h2>
     <div class="mockup-wrap">
       <div class="mockup">
         <div class="side-panel" data-side="front"><span class="mockup-label">前面</span>
           <div class="shirt">
             <div class="shirt-color"></div>
+            <div class="layer frame-base"></div>
             <div class="logo">
               <div class="layer frame"></div>
               <div class="layer leaf"></div>
@@ -587,22 +611,14 @@ button:hover { background: #eee9df; }
         <div class="control-row"><label>ボディ</label><input type="color" data-var="--body"><input type="text" data-var-text="--body"></div>
         <p class="ctrl-section-title">▸ 前面</p>
         <div class="ctrl-panel" data-ctrl="front">
-          <div class="control-row"><label>文字</label><input type="color" data-var="--text"><input type="text" data-var-text="--text"></div>
-          <div class="control-row"><label>葉</label><input type="color" data-var="--leaf"><input type="text" data-var-text="--leaf"></div>
-          <div class="control-row"><label>花</label><input type="color" data-var="--flower"><input type="text" data-var-text="--flower"></div>
-          <div class="control-row"><label>枠</label><input type="color" data-var="--frame"><input type="text" data-var-text="--frame"></div>
+          <div class="control-row" data-linked-layer="text"><label>文字</label><input type="color" data-var="--text"><input type="text" data-var-text="--text"><span class="row-toggle"><input type="checkbox" class="row-layer-toggle" data-layer="text" checked></span></div>
+          <div class="control-row" data-linked-layer="leaf"><label>葉</label><input type="color" data-var="--leaf"><input type="text" data-var-text="--leaf"><span class="row-toggle"><input type="checkbox" class="row-layer-toggle" data-layer="leaf" checked></span></div>
+          <div class="control-row" data-linked-layer="flower"><label>花</label><input type="color" data-var="--flower"><input type="text" data-var-text="--flower"><span class="row-toggle"><input type="checkbox" class="row-layer-toggle" data-layer="flower" checked></span></div>
+          <div class="control-row row-disabled" data-linked-layer="frame-base"><label>枠</label><input type="color" data-var="--frame-base"><input type="text" data-var-text="--frame-base"><span class="row-toggle"><input type="checkbox" class="row-layer-toggle" data-layer="frame-base" ></span></div>
+          <div class="control-row" data-linked-layer="frame"><label>塗り</label><input type="color" data-var="--frame"><input type="text" data-var-text="--frame"><span class="row-toggle"><input type="checkbox" class="row-layer-toggle" data-layer="frame" checked></span></div>
           <p class="ctrl-section-title">▸ 背面</p>
-          <div class="control-row"><label>テキスト</label><input type="color" data-var="--back-text"><input type="text" data-var-text="--back-text"></div>
-          <div class="layer-toggle-box">
-            <p class="layer-toggle-title">素材ごとの表示 / 非表示</p>
-            <div class="layer-toggle-grid">
-              <label class="layer-toggle-row"><input type="checkbox" class="toggle-layer" data-layer="text" checked><span>文字</span></label>
-              <label class="layer-toggle-row"><input type="checkbox" class="toggle-layer" data-layer="leaf" checked><span>葉</span></label>
-              <label class="layer-toggle-row"><input type="checkbox" class="toggle-layer" data-layer="flower" checked><span>花</span></label>
-              <label class="layer-toggle-row"><input type="checkbox" class="toggle-layer" data-layer="frame" checked><span>枠</span></label>
-              <label class="layer-toggle-row"><input type="checkbox" class="toggle-layer" data-layer="back-text" checked><span>テキスト</span></label>
-            </div>
-          </div>
+          <div class="control-row" data-linked-layer="back-text"><label>テキスト</label><input type="color" data-var="--back-text"><input type="text" data-var-text="--back-text"><span class="row-toggle"><input type="checkbox" class="row-layer-toggle" data-layer="back-text" checked></span></div>
+</div>
         </div>
 
         <div class="button-row">
@@ -614,13 +630,14 @@ button:hover { background: #eee9df; }
     </div>
   </section>
 
-  <section class="card" style="--body:#FCE8E6;--text:#EE4297;--leaf:#91D9CE;--flower:#FFB6C7;--frame:#E7BD53;--back-text:#EE4297;">
+  <section class="card hide-frame-base" style="--body:#FCE8E6;--text:#EE4297;--leaf:#91D9CE;--flower:#FFB6C7;--frame:#FFFFFF;--back-text:#EE4297;--frame-base:#E7BD53">
     <h2>Bloom Band</h2>
     <div class="mockup-wrap">
       <div class="mockup">
         <div class="side-panel" data-side="front"><span class="mockup-label">前面</span>
           <div class="shirt">
             <div class="shirt-color"></div>
+            <div class="layer frame-base"></div>
             <div class="logo">
               <div class="layer frame"></div>
               <div class="layer leaf"></div>
@@ -644,22 +661,14 @@ button:hover { background: #eee9df; }
         <div class="control-row"><label>ボディ</label><input type="color" data-var="--body"><input type="text" data-var-text="--body"></div>
         <p class="ctrl-section-title">▸ 前面</p>
         <div class="ctrl-panel" data-ctrl="front">
-          <div class="control-row"><label>文字</label><input type="color" data-var="--text"><input type="text" data-var-text="--text"></div>
-          <div class="control-row"><label>葉</label><input type="color" data-var="--leaf"><input type="text" data-var-text="--leaf"></div>
-          <div class="control-row"><label>花</label><input type="color" data-var="--flower"><input type="text" data-var-text="--flower"></div>
-          <div class="control-row"><label>枠</label><input type="color" data-var="--frame"><input type="text" data-var-text="--frame"></div>
+          <div class="control-row" data-linked-layer="text"><label>文字</label><input type="color" data-var="--text"><input type="text" data-var-text="--text"><span class="row-toggle"><input type="checkbox" class="row-layer-toggle" data-layer="text" checked></span></div>
+          <div class="control-row" data-linked-layer="leaf"><label>葉</label><input type="color" data-var="--leaf"><input type="text" data-var-text="--leaf"><span class="row-toggle"><input type="checkbox" class="row-layer-toggle" data-layer="leaf" checked></span></div>
+          <div class="control-row" data-linked-layer="flower"><label>花</label><input type="color" data-var="--flower"><input type="text" data-var-text="--flower"><span class="row-toggle"><input type="checkbox" class="row-layer-toggle" data-layer="flower" checked></span></div>
+          <div class="control-row row-disabled" data-linked-layer="frame-base"><label>枠</label><input type="color" data-var="--frame-base"><input type="text" data-var-text="--frame-base"><span class="row-toggle"><input type="checkbox" class="row-layer-toggle" data-layer="frame-base" ></span></div>
+          <div class="control-row" data-linked-layer="frame"><label>塗り</label><input type="color" data-var="--frame"><input type="text" data-var-text="--frame"><span class="row-toggle"><input type="checkbox" class="row-layer-toggle" data-layer="frame" checked></span></div>
           <p class="ctrl-section-title">▸ 背面</p>
-          <div class="control-row"><label>テキスト</label><input type="color" data-var="--back-text"><input type="text" data-var-text="--back-text"></div>
-          <div class="layer-toggle-box">
-            <p class="layer-toggle-title">素材ごとの表示 / 非表示</p>
-            <div class="layer-toggle-grid">
-              <label class="layer-toggle-row"><input type="checkbox" class="toggle-layer" data-layer="text" checked><span>文字</span></label>
-              <label class="layer-toggle-row"><input type="checkbox" class="toggle-layer" data-layer="leaf" checked><span>葉</span></label>
-              <label class="layer-toggle-row"><input type="checkbox" class="toggle-layer" data-layer="flower" checked><span>花</span></label>
-              <label class="layer-toggle-row"><input type="checkbox" class="toggle-layer" data-layer="frame" checked><span>枠</span></label>
-              <label class="layer-toggle-row"><input type="checkbox" class="toggle-layer" data-layer="back-text" checked><span>テキスト</span></label>
-            </div>
-          </div>
+          <div class="control-row" data-linked-layer="back-text"><label>テキスト</label><input type="color" data-var="--back-text"><input type="text" data-var-text="--back-text"><span class="row-toggle"><input type="checkbox" class="row-layer-toggle" data-layer="back-text" checked></span></div>
+</div>
         </div>
 
         <div class="button-row">
@@ -689,7 +698,8 @@ button:hover { background: #eee9df; }
     "--text":      "文字（前面）",
     "--leaf":      "葉",
     "--flower":    "花",
-    "--frame":     "枠",
+    "--frame":     "塗り",
+    "--frame-base": "枠",
     "--back-text": "テキスト"
   };
 
@@ -771,10 +781,13 @@ button:hover { background: #eee9df; }
       });
     });
 
-    // レイヤー表示トグル
-    card.querySelectorAll(".toggle-layer").forEach((toggle) => {
+    // 各素材行のチェックボックスで表示/非表示 + グレーアウト
+    card.querySelectorAll(".row-layer-toggle").forEach((toggle) => {
       toggle.addEventListener("change", () => {
-        card.classList.toggle(`hide-${toggle.dataset.layer}`, !toggle.checked);
+        const layer = toggle.dataset.layer;
+        const isChecked = toggle.checked;
+        card.classList.toggle(`hide-${layer}`, !isChecked);
+        toggle.closest(".control-row").classList.toggle("row-disabled", !isChecked);
       });
     });
 
@@ -783,9 +796,11 @@ button:hover { background: #eee9df; }
     if (reset) {
       reset.addEventListener("click", () => {
         Object.keys(initialColors).forEach((cssVar) => setColor(card, cssVar, initialColors[cssVar]));
-        card.querySelectorAll(".toggle-layer").forEach((toggle) => {
-          toggle.checked = true;
-          card.classList.remove(`hide-${toggle.dataset.layer}`);
+        card.querySelectorAll(".row-layer-toggle").forEach((toggle) => {
+          const defaultChecked = toggle.defaultChecked;
+          toggle.checked = defaultChecked;
+          card.classList.toggle(`hide-${toggle.dataset.layer}`, !defaultChecked);
+          toggle.closest(".control-row").classList.toggle("row-disabled", !defaultChecked);
         });
         const output = card.querySelector(".copy-output");
         if (output) output.style.display = "none";
